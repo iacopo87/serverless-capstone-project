@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { ImageItem } from '../types/ImageItem'
-import { getImages } from '../api/images-api'
+import { getImages, deleteImage } from '../api/images-api'
 import { Card, Divider, Button } from 'semantic-ui-react'
 import { UdagramImage } from './UdagramImage'
 import { History } from 'history'
@@ -38,6 +38,17 @@ export class ImagesList extends React.PureComponent<
     }
   }
 
+  onImageDelete = async (imageId: string) => {
+    try {
+      await deleteImage(this.props.auth.getIdToken(), imageId)
+      this.setState({
+        images: this.state.images.filter((image) => image.imageId != imageId)
+      })
+    } catch {
+      alert('Image deletion failed')
+    }
+  }
+
   render() {
     return (
       <div>
@@ -56,7 +67,13 @@ export class ImagesList extends React.PureComponent<
 
         <Card.Group>
           {this.state.images.map((image) => {
-            return <UdagramImage key={image.imageId} image={image} />
+            return (
+              <UdagramImage
+                key={image.imageId}
+                image={image}
+                onImageDelete={this.onImageDelete}
+              />
+            )
           })}
         </Card.Group>
       </div>
