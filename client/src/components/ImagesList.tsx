@@ -2,7 +2,7 @@ import * as React from 'react'
 import { ImageItem } from '../types/ImageItem'
 import { getImages, deleteImage } from '../api/images-api'
 import { Card, Divider, Button } from 'semantic-ui-react'
-import { UdagramImage } from './UdagramImage'
+import { UdagramImage } from './UdagramImage/UdagramImage'
 import { History } from 'history'
 import Auth from '../auth/Auth'
 
