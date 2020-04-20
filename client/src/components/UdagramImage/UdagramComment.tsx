@@ -7,12 +7,17 @@ import avatar from '../../elliot.jpg'
 type CommentProps = {
   text: string
   createdAt: string
+  key: string
 }
 TimeAgo.addLocale(en)
 const timeAgo = new TimeAgo('en-US')
 
-export const UdagramComment: React.FC<CommentProps> = ({ text, createdAt }) => (
-  <Comment>
+export const UdagramComment: React.FC<CommentProps> = ({
+  text,
+  createdAt,
+  key
+}) => (
+  <Comment key={key}>
     <Comment.Avatar src={avatar} />
     <Comment.Content>
       <Comment.Metadata>

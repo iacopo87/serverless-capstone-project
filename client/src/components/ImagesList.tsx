@@ -69,6 +69,7 @@ export class ImagesList extends React.PureComponent<
           {this.state.images.map((image) => {
             return (
               <UdagramImage
+                auth={this.props.auth}
                 key={image.imageId}
                 image={image}
                 onImageDelete={this.onImageDelete}

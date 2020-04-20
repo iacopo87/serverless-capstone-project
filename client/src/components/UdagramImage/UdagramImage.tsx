@@ -1,23 +1,20 @@
 import * as React from 'react'
-import { Card, Comment, Image, Header } from 'semantic-ui-react'
+import { Card, Image } from 'semantic-ui-react'
 import { ImageDescription } from './ImageDescription'
-import { UdagramComment } from './UdagramComment'
+import { UdagramFooter } from './UdagramFooter'
 import { ImageItem } from '../../types/ImageItem'
-import { CommentItem } from '../../types/CommentItem'
+import Auth from '../../auth/Auth'
 
 interface ImageCardProps {
+  auth: Auth
   image: ImageItem
   onImageDelete: (imageId: string) => void
 }
 
-interface ImageCardState {}
-
-export class UdagramImage extends React.PureComponent<
-  ImageCardProps,
-  ImageCardState
-> {
+export class UdagramImage extends React.PureComponent<ImageCardProps> {
   render() {
-    const { image } = this.props
+    const { image, auth } = this.props
+
     return (
       <Card fluid color="red">
         {image.imageUrl && <Image src={image.imageUrl} wrapped ui={false} />}
@@ -26,18 +23,11 @@ export class UdagramImage extends React.PureComponent<
             image={image}
             onImageDelete={this.props.onImageDelete}
           />
-          <Comment.Group>
-            <Header as="h1" dividing>
-              Comments
-            </Header>
-            {image.comments &&
-              image.comments.map((comment: CommentItem) => (
-                <UdagramComment
-                  text={comment.text}
-                  createdAt={comment.createdAt}
-                />
-              ))}
-          </Comment.Group>
+          <UdagramFooter
+            auth={auth}
+            imageId={image.imageId}
+            comments={image.comments}
+          />
         </Card.Content>
       </Card>
     )
