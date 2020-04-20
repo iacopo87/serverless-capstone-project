@@ -14,11 +14,11 @@ export const handler = middy(
 
     const imageId = event.pathParameters.imageId;
     const comment = JSON.parse(event.body);
-    await createComment(comment, imageId);
+    const newComment = await createComment(comment, imageId);
 
     return {
       statusCode: 200,
-      body: "",
+      body: JSON.stringify(newComment),
     };
   }
 );
