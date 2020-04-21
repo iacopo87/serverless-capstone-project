@@ -150,6 +150,28 @@ functions:
         Resource:
           - "*"
 
+  ElasticSearchSync:
+    environment:
+      ES_ENDPOINT: !GetAtt LogSearch.DomainEndpoint
+    handler: src/lambda/cloudWatch/elasticSearchSync.handler
+    tracing: PassThrough
+    events:
+      - cloudwatchLog:
+          logGroup: "/aws/lambda/cloud-capstone-app-${self:provider.stage}-GetImages"
+      - cloudwatchLog:
+          logGroup: "/aws/lambda/cloud-capstone-app-${self:provider.stage}-Auth"
+      - cloudwatchLog:
+          logGroup: "/aws/lambda/cloud-capstone-app-${self:provider.stage}-CreateImage"
+      - cloudwatchLog:
+          logGroup: "/aws/lambda/cloud-capstone-app-${self:provider.stage}-CreateComment"
+      - cloudwatchLog:
+        logGroup: "/aws/lambda/cloud-capstone-app-${self:provider.stage}-DeleteImage"
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - es:*
+        Resource: arn:aws:es::${self:provider.region}:*:domain/log-search-${self:provider.stage}
+
 resources:
   Resources:
     ImagesDynamoDBTable:
@@ -242,3 +264,27 @@ resources:
               Action: "s3:GetObject"
               Resource: "arn:aws:s3:::${self:provider.environment.IMAGES_S3_BUCKET}/*"
         Bucket: !Ref ImagesBucket
+
+    LogSearch:
+      Type: AWS::Elasticsearch::Domain
+      Properties:
+        ElasticsearchVersion: "6.3"
+        DomainName: log-search-${self:provider.stage}
+        ElasticsearchClusterConfig:
+          DedicatedMasterEnabled: false
+          InstanceCount: "1"
+          ZoneAwarenessEnabled: false
+          InstanceType: t2.small.elasticsearch
+        EBSOptions:
+          EBSEnabled: true
+          Iops: 0
+          VolumeSize: 10
+          VolumeType: "gp2"
+        AccessPolicies:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Principal:
+                AWS: "*"
+              Action: "es:*"
+              Resource: "*"
