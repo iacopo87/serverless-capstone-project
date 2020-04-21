@@ -14,6 +14,15 @@ export const handler = middy(
 
     const imageId = event.pathParameters.imageId;
     const comment = JSON.parse(event.body);
+
+    if (!comment.text) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({
+          error: "The comment souldn't be empty",
+        }),
+      };
+    }
     const newComment = await createComment(comment, imageId);
 
     return {
